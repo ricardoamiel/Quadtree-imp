@@ -2,7 +2,7 @@
 CC=g++
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system # SFML libraries
 
-# -> opciones de compilacion
+# -> opciones de compilacion (2 test)
 CFLAGS=-I include
 EXECUTABLE=main
 TEST_EXECUTABLE=test
