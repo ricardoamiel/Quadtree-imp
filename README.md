@@ -33,3 +33,14 @@ make test2
 
 rm test
 rm test2
+
+
+# WEBS REFERENCES
+
+- [https://people.scs.carleton.ca/~maheshwa/courses/5703COMP/16Fall/quadtrees-paper.pdf]
+
+- [https://www.youtube.com/watch?v=OJxEcs0w_kE]
+
+- [https://www.youtube.com/watch?v=QQx_NmCIuCY]
+
+- [https://www.youtube.com/watch?v=z0YFFg_nBjw]
