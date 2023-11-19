@@ -12,22 +12,22 @@ make test
 
 ### First screen
 
-![inicio-test1](test1-inicio.jpeg)
+![inicio-test1](images/test1-inicio.jpeg)
 
 ### When you hold the left click => create static points
 
-![click-test1](test1-click.jpeg)
+![click-test1](images/test1-click.jpeg)
 
 ## For run second test
 
 make test2
 ./test2
 
-![inicio-test2](test2-inicio.jpeg)
+![inicio-test2](images/test2-inicio.jpeg)
 
 ### When you hold the left click => create random move points
 
-![click-test2](test2-click.jpeg)
+![click-test2](images/test2-click.jpeg)
 
 ## For delete 
 
