@@ -95,7 +95,10 @@ int main() {
                             points.push_back(p);
                         });
                     }
-                }        
+                } else if (event.mouseButton.button == sf::Mouse::Middle) {
+                    // Establecer el punto de búsqueda en la posición del cursor
+                    searchPoint = clickedPoint;
+                }    
             }
         }
 
@@ -138,7 +141,13 @@ int main() {
             window.draw(circle);
         });
 
-        // Dibujar punto de búsqueda (si es necesario)
+        // Dibuja el punto de búsqueda si se ha establecido
+        if (searchPoint.x != 0 || searchPoint.y != 0) { // Asegúrate de que el punto ha sido inicializado
+            sf::CircleShape searchPointCircle(5);
+            searchPointCircle.setPosition(searchPoint.x - 5, searchPoint.y - 5);
+            searchPointCircle.setFillColor(sf::Color::Blue);
+            window.draw(searchPointCircle);
+        }
 
         // Actualizar y dibujar estadísticas de colisiones
         text.setString("Objeto: " + std::to_string(points.size()));
