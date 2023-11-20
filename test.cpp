@@ -34,9 +34,11 @@ int main() {
     //QuadTree quadTree(boundary);
 
     // Especificando una capacidad diferente
-    int customCapacity = 12; // Puedes cambiar este valor según tus necesidades
+    int customCapacity = 4; // Puedes cambiar este valor según tus necesidades
     QuadTree quadTree(boundary, customCapacity);
     
+    // Vector para almacenar los puntos de ejemplo
+    std::vector<Point> points;
 
     Point point1(200, 300);
     Point point2(500, 400);
@@ -46,11 +48,23 @@ int main() {
     quadTree.insert(point2);
     quadTree.insert(point3);
 
+    points.emplace_back(point1);
+    points.emplace_back(point2);
+    points.emplace_back(point3);
+
     // Punto de búsqueda
     Point searchPoint(100, 300);
 
-    // Variable para saber si el botón del ratón está presionado
-    bool mouseHeldDown = false;
+    sf::Font font;
+    if (!font.loadFromFile("fonts/sofia.ttf")) {
+        std::cerr << "Error loading font." << std::endl;
+        return -1;
+    }
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::Black);
 
     // Bucle principal de la simulación
     while (window.isOpen()) {
@@ -59,21 +73,23 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             } else if (event.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                Point clickedPoint(mousePos.x, mousePos.y);
                 if (event.mouseButton.button == sf::Mouse::Left) {
-                    mouseHeldDown = true;
-                }
-            } else if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    mouseHeldDown = false;
-                }
-            }
-        }
+                    // Insertar un nuevo punto en el QuadTree con un solo clic
+                    quadTree.insert(clickedPoint);
+                } else if (event.mouseButton.button == sf::Mouse::Right) {
+                    // Crear un rango alrededor del punto donde se hizo clic
+                    Rectangle range(mousePos.x, mousePos.y, 15, 15); // El tamaño del rango puede ser ajustado
+                    quadTree.delete_in_range(range);
 
-        // Si el botón del ratón está presionado, inserta puntos en el QuadTree
-        if (mouseHeldDown) {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            Point newPoint(mousePos.x, mousePos.y);
-            quadTree.insert(newPoint);
+                    // Después de la eliminación, intenta unir si es necesario
+                    while (quadTree.tryMerge()) {
+                        // Continúa intentando unir mientras sea posible
+
+                    }
+                }        
+            }
         }
 
         // Lógica de la simulación
@@ -116,6 +132,11 @@ int main() {
         });
 
         // Dibujar punto de búsqueda (si es necesario)
+
+        // Actualizar y dibujar estadísticas de colisiones
+        text.setString("Objeto: " + std::to_string(points.size()));
+        window.draw(text);
+
         // ...
 
         window.display(); // Actualiza la ventana con todo lo que se ha dibujado

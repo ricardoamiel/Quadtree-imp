@@ -8,6 +8,7 @@ EXECUTABLE=main
 TEST_EXECUTABLE=test
 TEST_EXECUTABLE_2=test2
 
+
 # -> estructura de folder y archivos
 SRC_DIR=src
 TEST_DIR=tests
@@ -26,6 +27,8 @@ $(TEST_EXECUTABLE): test.cpp Point.h Rectangle.h Circle.h Quadtree.h
 test2: $(TEST_EXECUTABLE_2)
 $(TEST_EXECUTABLE_2): test2.cpp Point.h Rectangle.h Circle.h Quadtree.h
 	$(CC) $(CFLAGS) test2.cpp -o $(TEST_EXECUTABLE_2) $(SFML_FLAGS)
+
+
 
 # -> limpiar archivos compilados
 clean:

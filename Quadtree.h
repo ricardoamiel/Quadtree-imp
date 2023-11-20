@@ -133,6 +133,10 @@ public:
     }
 
     void delete_in_range(const Rectangle& range) {
+        if (!boundary.intersects(range)) {
+            return; // Si el rango no intersecta este cuadrante, no hacer nada
+        }
+
         if (divided) {
             northeast->delete_in_range(range);
             northwest->delete_in_range(range);
@@ -273,22 +277,74 @@ public:
 
     // Método para eliminar un punto específico del QuadTree
     bool remove(const Point& point) {
-        // Esto es ineficiente: busca en el vector y elimina el punto si lo encuentra
+        // Si el punto no está en este cuadrante, no hacer nada
+        if (!boundary.contains(point)) return false;
+
+        // Intenta remover el punto si está en este nodo
         auto it = std::find(points.begin(), points.end(), point);
         if (it != points.end()) {
             points.erase(it);
-            return true;  // Punto encontrado y eliminado
+            return true; // Punto fue encontrado y removido
         }
 
-        // Si el QuadTree está dividido, intenta eliminar el punto de los nodos hijos
+        // Si el nodo está dividido, intenta remover el punto en los hijos
         if (divided) {
             return northeast->remove(point) ||
-                   northwest->remove(point) ||
-                   southeast->remove(point) ||
-                   southwest->remove(point);
+                northwest->remove(point) ||
+                southeast->remove(point) ||
+                southwest->remove(point);
         }
 
-        return false;  // Punto no encontrado en este nodo
+        return false; // Punto no fue encontrado
+    }
+
+    void getPointsFromChildren(std::vector<Point>& allPoints) {
+        if (divided) {
+            // Llama recursivamente para recoger puntos de los nodos hijos
+            for (auto child : getChildren()) {
+                child->getPointsFromChildren(allPoints);
+            }
+        } else {
+            // Agrega los puntos de este nodo al vector
+            allPoints.insert(allPoints.end(), points.begin(), points.end());
+        }
+    }
+
+    void deleteChildren() {
+        // Limpia y elimina los nodos hijos
+        delete northeast;
+        delete northwest;
+        delete southeast;
+        delete southwest;
+        northeast = northwest = southeast = southwest = nullptr;
+    }
+
+    bool tryMerge() {
+        if (!divided) {
+            return false;
+        }
+
+        // Intenta unir recursivamente en los nodos hijos primero
+        bool merged = false;
+        merged |= northeast->tryMerge();
+        merged |= northwest->tryMerge();
+        merged |= southeast->tryMerge();
+        merged |= southwest->tryMerge();
+
+        // Luego, reunir todos los puntos de los nodos hijos
+        std::vector<Point> collectedPoints;
+        getPointsFromChildren(collectedPoints);
+
+        // Si la cantidad total de puntos es menor que la capacidad, unir los nodos
+        if (collectedPoints.size()-1 < capacity) {
+            // Unir nodos, copiar puntos de los hijos a este nodo y eliminarlos
+            points = collectedPoints;
+            deleteChildren(); // Elimina los nodos hijosQuadTree
+            divided = false;
+            return true; // Se realizó la unión
+        }
+
+        return merged; // Devuelve verdadero si se realizó alguna unión
     }
 
     ~QuadTree() {
