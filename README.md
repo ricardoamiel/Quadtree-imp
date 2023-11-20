@@ -8,6 +8,7 @@ run makefile using this command on your terminal:
 ## For run first test, 
 
 make test
+
 ./test
 
 ### First screen
@@ -21,6 +22,7 @@ make test
 ## For run second test
 
 make test2
+
 ./test2
 
 ![inicio-test2](images/test2-inicio.jpeg)
@@ -32,7 +34,15 @@ make test2
 ## For delete 
 
 rm test
+
 rm test2
+
+## COMPLEXITY TABLE
+
+It is important to be able to compare what computational and spatial complexity our data structure encompasses. That is why we have made a comparison between the complexity of our implementation and the target complexity, which is the best possible to implement.
+
+![complex-comp1](images/table1.png)
+![complex-comp2](images/table2.png)
 
 
 # WEBS REFERENCES
