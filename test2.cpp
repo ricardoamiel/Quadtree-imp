@@ -183,7 +183,7 @@ int main() {
         drawQuadTree(window, &quadTree);
         
 
-        // Actualizar y dibujar estadísticas
+        // Actualizar y dibujar estadísticas de colisiones
         text.setString("Objeto: " + std::to_string(points.size()) + "\nColisiones: " + std::to_string(collisionCountThisFrame)); // + "\nCollisions: " + std::to_string(totalCollisions)
         window.draw(text);
 
