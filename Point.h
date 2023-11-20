@@ -31,14 +31,22 @@ public:
 class MovingPoint : public Point {
 public:
     double vx, vy; // Velocidades en el eje x e y
+    bool collidedThisFrame;  // Flag para marcar si el punto ya ha colisionado en este frame
+    sf::Color color; // Color del punto
 
-    MovingPoint(double _x, double _y, double _vx, double _vy) 
-    : Point(_x, _y), vx(_vx), vy(_vy) {}
+   MovingPoint(double x, double y, double vx, double vy) : Point(x, y), vx(vx), vy(vy), collidedThisFrame(false), color(sf::Color::Red) {}
+
+   void resetCollisionFlag() {
+        collidedThisFrame = false;
+    }
 
     // Actualiza la posición basada en la velocidad
     void update(double deltaTime) {
         x += vx * deltaTime;
         y += vy * deltaTime;
+
+        // Actualizar el estado de colisión
+        collidedThisFrame = false;
     }
 
     // Rebotar en horizontal

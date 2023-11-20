@@ -2,8 +2,8 @@
 
 class QuadTree {
 private:
-    static const int DEFAULT_CAPACITY = 8;
-    static const int MAX_DEPTH = 8;
+    static const int DEFAULT_CAPACITY = 10;
+    static const int MAX_DEPTH = 10;
 
     Rectangle boundary;
     int capacity;
@@ -18,7 +18,9 @@ private:
 
 public:
     QuadTree(const Rectangle& _boundary, int _capacity = DEFAULT_CAPACITY, int _depth = 0)
-        : boundary(_boundary), capacity(_capacity), divided(false), depth(_depth) {}
+    : boundary(_boundary), capacity(_capacity), divided(false), depth(_depth),
+      northeast(nullptr), northwest(nullptr), southeast(nullptr), southwest(nullptr) {}
+
 
     // Getter methods
     QuadTree* getNortheast() const { return northeast; }
@@ -44,13 +46,14 @@ public:
     void clear() {
         points.clear();
         if (divided) {
+            delete northeast; northeast = nullptr;
+            delete northwest; northwest = nullptr;
+            delete southeast; southeast = nullptr;
+            delete southwest; southwest = nullptr;
             divided = false;
-            delete northeast;
-            delete northwest;
-            delete southeast;
-            delete southwest;
         }
     }
+
 
     static QuadTree* create(const Rectangle& boundary, int capacity = DEFAULT_CAPACITY) {
         return new QuadTree(boundary, capacity);
@@ -290,5 +293,11 @@ public:
 
     ~QuadTree() {
         clear();
+        // Asegúrate de que también se establezcan a nullptr después de borrar.
+        northeast = nullptr;
+        northwest = nullptr;
+        southeast = nullptr;
+        southwest = nullptr;
     }
+
 };

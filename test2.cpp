@@ -39,6 +39,8 @@ int main() {
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::Black);
 
+    int collisionCountThisFrame = 0; // Este contador se reinicia cada frame
+
     bool mouseHeldDown = false; // Flag para controlar si el botón del ratón está presionado
 
     while (window.isOpen()) {
@@ -72,7 +74,7 @@ int main() {
         sf::Time elapsed = clock.restart(); // Tiempo transcurrido desde el último frame
         double deltaTime = elapsed.asSeconds();
 
-        // Actualización de puntos
+        // 1. Actualizar la posición de los puntos
         quadTree.clear(); // Limpiar el QuadTree antes de volver a insertar los puntos
         for (auto& point : points) {
             point.update(deltaTime); // Actualiza la posición basada en la velocidad
@@ -86,19 +88,51 @@ int main() {
             quadTree.insert(point);
         }
 
-        // Detección de colisiones y respuesta
-        // ... Lógica para detectar y responder a las colisiones ...
-        // Suponemos que los puntos no se superponen inicialmente
+        // 2. Restablecer el flag de colisión
+        for (auto& point : points) {
+            point.resetCollisionFlag(); // Resetea el flag de colisión antes de la detección
+        }
+
+        // Reinicia el contador de colisiones cada frame
+        //collisionCountThisFrame = 0;
+
+        // 3. Detección de colisiones y respuesta
         for (size_t i = 0; i < points.size(); ++i) {
             for (size_t j = i + 1; j < points.size(); ++j) {
-                double dx = points[j].x - points[i].x;
-                double dy = points[j].y - points[i].y;
-                double distanceSquared = dx * dx + dy * dy;
-                if (distanceSquared < 9) {  // Suponiendo que los puntos tienen un radio de 3
-                    points[i].bounceX();
-                    points[i].bounceY();
-                    points[j].bounceX();
-                    points[j].bounceY();
+                if (!points[i].collidedThisFrame && !points[j].collidedThisFrame) {
+                    double dx = points[j].x - points[i].x;
+                    double dy = points[j].y - points[i].y;
+                    double distanceSquared = dx * dx + dy * dy;
+                    // Después de detectar una colisión
+                    if (distanceSquared < 9) {
+                        // Calcular el vector normal de la colisión
+                        double nx = dx / sqrt(distanceSquared);
+                        double ny = dy / sqrt(distanceSquared);
+
+                        // Calcular la velocidad relativa en la dirección normal
+                        double relVel = points[i].vx * nx + points[i].vy * ny
+                                    - points[j].vx * nx - points[j].vy * ny;
+
+                        // Solo rebota si los objetos se están moviendo uno hacia el otro
+                        if (relVel > 0) continue;
+
+                        // Aplicar una fuerza de rebote (esto es un ejemplo simple y podría no ser físicamente preciso)
+                        double bounce = 2 * relVel;
+                        double dumping = 1; // Factor de amortiguacion para reducir la velocidad después de la colisión
+                        points[i].vx -= bounce * nx * dumping;
+                        points[i].vy -= bounce * ny * dumping;
+                        points[j].vx += bounce * nx * dumping;
+                        points[j].vy += bounce * ny * dumping;
+
+                        // Marcar como colisionados
+                        points[i].collidedThisFrame = true;
+                        points[j].collidedThisFrame = true;
+                        points[i].color = sf::Color::Black;
+                        points[j].color = sf::Color::Black;
+
+                        // Incrementar el contador de colisiones
+                        collisionCountThisFrame++;
+                    }
                 }
             }
         }
@@ -106,11 +140,11 @@ int main() {
         // Renderización
         window.clear(sf::Color::White);
 
-        // Dibuja puntos
-        for (const auto& point : points) {
-            sf::CircleShape shape(3); // Tamaño de los puntos
-            shape.setPosition(static_cast<float>(point.x - 3), static_cast<float>(point.y - 3)); // Centrar el punto
-            shape.setFillColor(sf::Color::Red);
+        // Dibuja los puntos con el color actualizado
+        for (auto& point : points) {
+            sf::CircleShape shape(3);
+            shape.setPosition(static_cast<float>(point.x - 3), static_cast<float>(point.y - 3));
+            shape.setFillColor(point.color);
             window.draw(shape);
         }
 
@@ -150,7 +184,7 @@ int main() {
         
 
         // Actualizar y dibujar estadísticas
-        text.setString("Objects: " + std::to_string(points.size()));
+        text.setString("Objeto: " + std::to_string(points.size()) + "\nColisiones: " + std::to_string(collisionCountThisFrame)); // + "\nCollisions: " + std::to_string(totalCollisions)
         window.draw(text);
 
         window.display();
