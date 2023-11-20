@@ -78,6 +78,7 @@ int main() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     // Insertar un nuevo punto en el QuadTree con un solo clic
                     quadTree.insert(clickedPoint);
+                    points.emplace_back(clickedPoint);
                 } else if (event.mouseButton.button == sf::Mouse::Right) {
                     // Crear un rango alrededor del punto donde se hizo clic
                     Rectangle range(mousePos.x, mousePos.y, 15, 15); // El tamaño del rango puede ser ajustado
@@ -87,6 +88,12 @@ int main() {
                     while (quadTree.tryMerge()) {
                         // Continúa intentando unir mientras sea posible
 
+
+                        // Si se realizó una unión, reconstruye el vector de puntos
+                        points.clear();
+                        quadTree.for_each([&points](const Point& p) {
+                            points.push_back(p);
+                        });
                     }
                 }        
             }

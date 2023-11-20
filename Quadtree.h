@@ -150,6 +150,7 @@ public:
         }), points.end());
     }
 
+    // Método para encontrar el punto más cercano a un punto dado
     std::vector<Point> closest(const Point& searchPoint, int maxCount = 1, double maxDistance = std::numeric_limits<double>::infinity()) {
         // &searchPoint == nullptr :::: searchPoint is assigned by reference, so it can't be nullptr
 
@@ -157,11 +158,13 @@ public:
         return k_nearest(searchPoint, maxCount, sqMaxDistance, 0, 0).found;
     }
 
+    // Estructura para almacenar los resultados de la búsqueda
     struct SearchResult {
         std::vector<Point> found;
         double furthestSqDistance;
     };
 
+    // Método para encontrar los k puntos más cercanos a un punto dado
     SearchResult k_nearest(const Point& searchPoint, int maxCount, double sqMaxDistance, double furthestSqDistance, int foundSoFar) {
         SearchResult result;
 
@@ -336,10 +339,10 @@ public:
         getPointsFromChildren(collectedPoints);
 
         // Si la cantidad total de puntos es menor que la capacidad, unir los nodos
-        if (collectedPoints.size()-1 < capacity) {
+        if (collectedPoints.size()-1 <= capacity) {
             // Unir nodos, copiar puntos de los hijos a este nodo y eliminarlos
             points = collectedPoints;
-            deleteChildren(); // Elimina los nodos hijosQuadTree
+            deleteChildren(); // Elimina los nodos hijos
             divided = false;
             return true; // Se realizó la unión
         }
