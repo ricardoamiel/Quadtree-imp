@@ -14,7 +14,7 @@ int main() {
 
     // Creación del QuadTree
     Rectangle boundary(400, 300, 800, 600);
-    QuadTree quadTree(boundary, 16);
+    QuadTree quadTree(boundary, 8);
 
     // Lista para almacenar y actualizar tus puntos
     std::vector<MovingPoint> points;
@@ -104,7 +104,8 @@ int main() {
                     double dy = points[j].y - points[i].y;
                     double distanceSquared = dx * dx + dy * dy;
                     // Después de detectar una colisión
-                    if (distanceSquared < 9) {
+                    if (distanceSquared < 36) {
+                        /*
                         // Calcular el vector normal de la colisión
                         double nx = dx / sqrt(distanceSquared);
                         double ny = dy / sqrt(distanceSquared);
@@ -117,18 +118,23 @@ int main() {
                         if (relVel > 0) continue;
 
                         // Aplicar una fuerza de rebote (esto es un ejemplo simple y podría no ser físicamente preciso)
-                        double bounce = 2 * relVel;
-                        double dumping = 1; // Factor de amortiguacion para reducir la velocidad después de la colisión
+                        double bounce = 0 * relVel;
+                        double dumping = 0; // Factor de amortiguacion para reducir la velocidad después de la colisión
                         points[i].vx -= bounce * nx * dumping;
                         points[i].vy -= bounce * ny * dumping;
                         points[j].vx += bounce * nx * dumping;
                         points[j].vy += bounce * ny * dumping;
+                        */
 
                         // Marcar como colisionados
                         points[i].collidedThisFrame = true;
                         points[j].collidedThisFrame = true;
                         points[i].color = sf::Color::Black;
                         points[j].color = sf::Color::Black;
+
+                        // Establecer el contador de frames de colisión
+                        points[i].collisionFramesLeft = 16; // Durará 10 frames
+                        points[j].collisionFramesLeft = 16;
 
                         // Incrementar el contador de colisiones
                         collisionCountThisFrame++;
@@ -139,14 +145,6 @@ int main() {
 
         // Renderización
         window.clear(sf::Color::White);
-
-        // Dibuja los puntos con el color actualizado
-        for (auto& point : points) {
-            sf::CircleShape shape(3);
-            shape.setPosition(static_cast<float>(point.x - 3), static_cast<float>(point.y - 3));
-            shape.setFillColor(point.color);
-            window.draw(shape);
-        }
 
         // ... Dibujo de subdivisiones del QuadTree y estadísticas ...
         std::function<void(sf::RenderWindow&, QuadTree*)> drawQuadTree;
@@ -173,9 +171,24 @@ int main() {
 
         // Dibuja puntos
         for (const auto& point : points) {
-            sf::CircleShape shape(3); // Tamaño de los puntos
+            sf::CircleShape shape(6); // Tamaño de los puntos
             shape.setPosition(static_cast<float>(point.x - 3), static_cast<float>(point.y - 3)); // Centrar el punto
             shape.setFillColor(sf::Color::Red);
+            window.draw(shape);
+        }
+
+        // Dibuja los puntos con el color actualizado
+        for (auto& point : points) {
+            if (point.collisionFramesLeft > 0) {
+                point.color = sf::Color::Black; // o cualquier otro color para la colisión
+                point.collisionFramesLeft--; // Decrementa el contador de frames
+            } else {
+                point.color = sf::Color::Red; // Restablece al color original si no hay colisión
+            }
+
+            sf::CircleShape shape(6);
+            shape.setPosition(static_cast<float>(point.x - 3), static_cast<float>(point.y - 3));
+            shape.setFillColor(point.color);
             window.draw(shape);
         }
 

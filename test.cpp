@@ -105,7 +105,7 @@ int main() {
         // Lógica de la simulación
 
         // Realiza una búsqueda en el QuadTree alrededor del punto de búsqueda
-        std::vector<Point> searchResult = quadTree.closest(searchPoint, 5, 200);
+        std::vector<Point> searchResult = quadTree.closest(searchPoint, 6, 200);
 
         // Renderizado
         window.clear(sf::Color::White); // Limpia la ventana con el color de fondo
