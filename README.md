@@ -11,13 +11,29 @@ make test
 
 ./test
 
-### First screen
+### First screen 
 
-![inicio-test1](images/test1-inicio.jpeg)
+We have an objects (points) counter at the upper left of the screen.
 
-### When you hold the left click => create static points
+- Red points: Points in a node of the QuadTree.
 
-![click-test1](images/test1-click.jpeg)
+- Blue point: Search range point.
+
+- Red with green: Nearest points in a range of blue point.
+
+![inicio-test1](images/test1-inicio.png)
+
+### When you CLICK the left click => create static points
+
+When you pass the node points capacity, subdivide nodes.
+
+![click-test1](images/test1-click.png)
+
+### When you CLICK the right click => remove static points
+
+When you return of the range node points capacity, merge nodes.
+
+![click-test1](images/test1-remove.png)
 
 ## For run second test
 
@@ -25,11 +41,19 @@ make test2
 
 ./test2
 
-![inicio-test2](images/test2-inicio.jpeg)
+### FIRST SCREEN
+
+We have an objects (points) counter and accumulate colision counter at the upper left of the screen.
+
+- Red points: Points in a node of the QuadTree.
+
+- Gray points: Colission points turn red to gray for 16 frames.
+
+![inicio-test2](images/test2-inicio.png)
 
 ### When you hold the left click => create random move points
 
-![click-test2](images/test2-click.jpeg)
+![click-test2](images/test2-click.png)
 
 ## For delete 
 
